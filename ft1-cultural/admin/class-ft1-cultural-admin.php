@@ -83,7 +83,22 @@ class FT1_Cultural_Admin {
         check_ajax_referer('ft1_nonce', 'nonce');
         
         if (!current_user_can('edit_ft1_editals')) {
-            wp_die('Permissão negada');
+            wp_send_json_error(array('message' => 'Permissão negada'));
+            return;
+        }
+
+        // Validar campos obrigatórios
+        if (empty($_POST['title']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
+            wp_send_json_error(array('message' => 'Título, data de início e data de fim são obrigatórios'));
+            return;
+        }
+
+        // Processar valor do orçamento
+        $budget = 0;
+        if (!empty($_POST['budget'])) {
+            $budget_clean = preg_replace('/[^\d,]/', '', $_POST['budget']);
+            $budget_clean = str_replace(',', '.', $budget_clean);
+            $budget = floatval($budget_clean);
         }
 
         $data = array(
@@ -91,7 +106,7 @@ class FT1_Cultural_Admin {
             'description' => wp_kses_post($_POST['description']),
             'start_date' => sanitize_text_field($_POST['start_date']),
             'end_date' => sanitize_text_field($_POST['end_date']),
-            'budget' => floatval($_POST['budget']),
+            'budget' => $budget,
             'status' => sanitize_text_field($_POST['status'])
         );
 
@@ -112,7 +127,14 @@ class FT1_Cultural_Admin {
         check_ajax_referer('ft1_nonce', 'nonce');
         
         if (!current_user_can('manage_ft1_cultural')) {
-            wp_die('Permissão negada');
+            wp_send_json_error(array('message' => 'Permissão negada'));
+            return;
+        }
+
+        // Validar campos obrigatórios
+        if (empty($_POST['name']) || empty($_POST['email'])) {
+            wp_send_json_error(array('message' => 'Nome e e-mail são obrigatórios'));
+            return;
         }
 
         $data = array(
@@ -121,7 +143,7 @@ class FT1_Cultural_Admin {
             'phone' => sanitize_text_field($_POST['phone']),
             'document' => sanitize_text_field($_POST['document']),
             'address' => sanitize_textarea_field($_POST['address']),
-            'edital_id' => intval($_POST['edital_id'])
+            'edital_id' => !empty($_POST['edital_id']) ? intval($_POST['edital_id']) : null
         );
 
         if (isset($_POST['id']) && $_POST['id'] > 0) {

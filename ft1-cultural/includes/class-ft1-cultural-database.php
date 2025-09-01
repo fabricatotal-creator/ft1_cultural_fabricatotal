@@ -29,10 +29,10 @@ class FT1_Cultural_Database {
         $table = $wpdb->prefix . 'ft1_editals';
 
         if (isset($data['id']) && $data['id'] > 0) {
-            // Atualizar
-            return $wpdb->update($table, $data, array('id' => $data['id']));
+            $id = $data['id'];
+            unset($data['id']);
+            return $wpdb->update($table, $data, array('id' => $id));
         } else {
-            // Inserir
             unset($data['id']);
             $data['created_by'] = get_current_user_id();
             return $wpdb->insert($table, $data);
@@ -75,7 +75,9 @@ class FT1_Cultural_Database {
         }
 
         if (isset($data['id']) && $data['id'] > 0) {
-            return $wpdb->update($table, $data, array('id' => $data['id']));
+            $id = $data['id'];
+            unset($data['id']);
+            return $wpdb->update($table, $data, array('id' => $id));
         } else {
             unset($data['id']);
             return $wpdb->insert($table, $data);
@@ -112,11 +114,53 @@ class FT1_Cultural_Database {
         }
 
         if (isset($data['id']) && $data['id'] > 0) {
-            return $wpdb->update($table, $data, array('id' => $data['id']));
+            $id = $data['id'];
+            unset($data['id']);
+            return $wpdb->update($table, $data, array('id' => $id));
         } else {
             unset($data['id']);
             return $wpdb->insert($table, $data);
         }
+    }
+
+    public static function save_document($data) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_documents';
+        
+        return $wpdb->insert($table, $data);
+    }
+
+    public static function get_documents($proponent_id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_documents';
+        
+        return $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table WHERE proponent_id = %d ORDER BY uploaded_at DESC",
+            $proponent_id
+        ));
+    }
+
+    public static function delete_document($id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_documents';
+        
+        // Buscar arquivo para deletar do sistema
+        $document = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table WHERE id = %d",
+            $id
+        ));
+        
+        if ($document && $document->file_path) {
+            // Converter URL para caminho do arquivo se necessário
+            $upload_dir = wp_upload_dir();
+            $file_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $document->file_path);
+            
+            if (file_exists($file_path)) {
+                unlink($file_path);
+            }
+        }
+        
+        return $wpdb->delete($table, array('id' => intval($id)));
     }
 
     public static function save_document($data) {
@@ -154,37 +198,4 @@ class FT1_Cultural_Database {
         return $wpdb->delete($table, array('id' => intval($id)));
     }
 
-    public static function delete_contract($id) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'ft1_contracts';
-        
-        return $wpdb->delete($table, array('id' => intval($id)));
-    }
-
-    public static function delete_document($id) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'ft1_documents';
-        
-        // Buscar arquivo para deletar do sistema
-        $document = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table WHERE id = %d",
-            $id
-        ));
-        
-        if ($document && file_exists($document->file_path)) {
-            unlink($document->file_path);
-        }
-        
-        return $wpdb->delete($table, array('id' => intval($id)));
-    }
-
-    public static function get_documents($proponent_id) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'ft1_documents';
-        
-        return $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM $table WHERE proponent_id = %d ORDER BY uploaded_at DESC",
-            $proponent_id
-        ));
-    }
 }

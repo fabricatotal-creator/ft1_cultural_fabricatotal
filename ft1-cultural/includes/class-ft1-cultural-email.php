@@ -41,7 +41,10 @@ class FT1_Cultural_Email {
             // Atualizar status do contrato
             $wpdb->update(
                 $table,
-                array('sent_date' => current_time('mysql'), 'status' => 'sent'),
+                array(
+                    'sent_date' => current_time('mysql'), 
+                    'status' => 'sent'
+                ),
                 array('id' => $contract_id)
             );
         }

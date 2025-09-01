@@ -124,7 +124,7 @@ $editals = FT1_Cultural_Database::get_editals();
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="ft1-form-group">
                         <label for="edital-budget">Orçamento (R$)</label>
-                        <input type="text" id="edital-budget" name="budget" data-mask="money" placeholder="R$ 0,00">
+                        <input type="text" id="edital-budget" name="budget" data-mask="money" placeholder="0,00">
                     </div>
                     
                     <div class="ft1-form-group">

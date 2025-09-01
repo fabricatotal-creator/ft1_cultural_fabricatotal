@@ -3,6 +3,7 @@ jQuery(document).ready(function($) {
 
     // Variáveis globais
     let currentModal = null;
+    let currentProponentId = null;
 
     // Inicializar componentes
     initModals();
@@ -15,6 +16,13 @@ jQuery(document).ready(function($) {
         $('.ft1-modal-trigger').on('click', function(e) {
             e.preventDefault();
             const modalId = $(this).data('modal');
+            
+            // Se for modal de documentos, salvar o ID do proponente
+            if (modalId === 'ft1-documents-modal') {
+                currentProponentId = $(this).data('proponent-id');
+                loadDocuments(currentProponentId);
+            }
+            
             openModal(modalId);
         });
 
@@ -43,7 +51,12 @@ jQuery(document).ready(function($) {
         if (currentModal) {
             currentModal.fadeOut(300);
             currentModal = null;
+            currentProponentId = null;
             $('body').removeClass('modal-open');
+            
+            // Limpar formulários
+            $('.ft1-form')[0].reset();
+            $('.ft1-form input[type="hidden"]').val('');
         }
     }
 
@@ -186,14 +199,6 @@ jQuery(document).ready(function($) {
             sendContract(contractId, 'whatsapp');
         });
 
-        // Botão para gerenciar documentos
-        $('.ft1-modal-trigger[data-modal="ft1-documents-modal"]').on('click', function(e) {
-            e.preventDefault();
-            const proponentId = $(this).data('proponent-id');
-            loadDocuments(proponentId);
-            openModal('ft1-documents-modal');
-        });
-
         // Delegação de eventos para botões dinâmicos
         $(document).on('click', '.ft1-btn-delete-document', function(e) {
             e.preventDefault();
@@ -323,6 +328,8 @@ jQuery(document).ready(function($) {
                     if (method === 'whatsapp' && response.data.whatsapp_url) {
                         window.open(response.data.whatsapp_url, '_blank');
                     }
+                    
+                    location.reload();
                 } else {
                     showAlert('error', response.data.message);
                 }
@@ -339,12 +346,11 @@ jQuery(document).ready(function($) {
             $(this).find('input[type="file"]').click();
         });
 
-        $('input[type="file"]').on('change', function() {
+        $('.ft1-file-upload input[type="file"]').on('change', function() {
             const input = this;
-            const proponentId = $(input).data('proponent-id');
             
-            if (input.files && input.files[0]) {
-                uploadDocument(input.files[0], proponentId);
+            if (input.files && input.files[0] && currentProponentId) {
+                uploadDocument(input.files[0], currentProponentId);
             }
         });
     }
@@ -368,7 +374,7 @@ jQuery(document).ready(function($) {
                 hideLoading();
                 if (response.success) {
                     showAlert('success', response.data.message);
-                    location.reload();
+                    loadDocuments(proponentId);
                 } else {
                     showAlert('error', response.data.message);
                 }
@@ -380,10 +386,112 @@ jQuery(document).ready(function($) {
         });
     }
 
+    function loadDocuments(proponentId) {
+        const data = {
+            action: 'ft1_get_documents',
+            proponent_id: proponentId,
+            nonce: ft1_ajax.nonce
+        };
+
+        $.post(ft1_ajax.ajax_url, data)
+            .done(function(response) {
+                if (response.success) {
+                    displayDocuments(response.data);
+                } else {
+                    $('#documents-list').html('<p>Erro ao carregar documentos.</p>');
+                }
+            })
+            .fail(function() {
+                $('#documents-list').html('<p>Erro de conexão ao carregar documentos.</p>');
+            });
+    }
+
+    function displayDocuments(documents) {
+        let html = '';
+        
+        if (documents && documents.length > 0) {
+            html += '<h4>📎 Documentos Enviados</h4>';
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">';
+            
+            documents.forEach(function(doc) {
+                const fileExt = doc.filename.split('.').pop().toLowerCase();
+                let icon = '📄';
+                
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) {
+                    icon = '🖼️';
+                } else if (fileExt === 'pdf') {
+                    icon = '📕';
+                } else if (['doc', 'docx'].includes(fileExt)) {
+                    icon = '📘';
+                }
+                
+                const uploadDate = new Date(doc.uploaded_at).toLocaleDateString('pt-BR');
+                
+                html += `
+                    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; background: #f9f9f9;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">${icon}</div>
+                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">${doc.filename}</div>
+                        <div style="font-size: 11px; color: #666; margin-bottom: 10px;">${uploadDate}</div>
+                        <div>
+                            <a href="${doc.file_path}" target="_blank" class="ft1-button" style="font-size: 11px; padding: 5px 10px; margin-right: 5px;">👁️ Ver</a>
+                            <button class="ft1-button secondary ft1-btn-delete-document" data-document-id="${doc.id}" style="font-size: 11px; padding: 5px 10px;">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+        } else {
+            html = '<p style="text-align: center; color: #666; margin: 20px 0;">Nenhum documento enviado ainda.</p>';
+        }
+        
+        $('#documents-list').html(html);
+    }
+
+    function deleteDocument(documentId) {
+        const data = {
+            action: 'ft1_delete_document',
+            id: documentId,
+            nonce: ft1_ajax.nonce
+        };
+
+        showLoading();
+
+        $.post(ft1_ajax.ajax_url, data)
+            .done(function(response) {
+                hideLoading();
+                if (response.success) {
+                    showAlert('success', response.data.message);
+                    if (currentProponentId) {
+                        loadDocuments(currentProponentId);
+                    }
+                } else {
+                    showAlert('error', response.data.message);
+                }
+            })
+            .fail(function() {
+                hideLoading();
+                showAlert('error', 'Erro de conexão. Tente novamente.');
+            });
+    }
+
     // Funções utilitárias
     function showLoading() {
         if ($('#ft1-loading').length === 0) {
-            $('body').append('<div id="ft1-loading" class="ft1-loading"><div class="spinner"></div></div>');
+            $('body').append(`
+                <div id="ft1-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #0073aa; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                </style>
+            `);
         }
         $('#ft1-loading').show();
     }
@@ -393,7 +501,7 @@ jQuery(document).ready(function($) {
     }
 
     function showAlert(type, message) {
-        const alert = $(`<div class="ft1-alert ${type}">${message}</div>`);
+        const alert = $(`<div class="ft1-alert ${type}" style="margin: 20px 0; padding: 15px; border-radius: 4px;">${message}</div>`);
         
         // Remover alertas existentes
         $('.ft1-alert').remove();
@@ -410,37 +518,55 @@ jQuery(document).ready(function($) {
     }
 
     // Máscara para campos
-    if (typeof $ !== 'undefined') {
-        $('input[data-mask="phone"]').on('input', function() {
-            let value = this.value.replace(/\D/g, '');
-            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-            this.value = value;
-        });
+    $('input[data-mask="phone"]').on('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+        this.value = value;
+    });
 
-        $('input[data-mask="cpf"]').on('input', function() {
-            let value = this.value.replace(/\D/g, '');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            this.value = value;
-        });
+    $('input[data-mask="cpf"]').on('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        this.value = value;
+    });
 
-        $('input[data-mask="cnpj"]').on('input', function() {
-            let value = this.value.replace(/\D/g, '');
-            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-            value = value.replace(/(\d{4})(\d)/, '$1-$2');
-            this.value = value;
-        });
+    $('input[data-mask="cnpj"]').on('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+        value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        this.value = value;
+    });
 
-        $('input[data-mask="money"]').on('input', function() {
-            let value = this.value.replace(/\D/g, '');
-            value = (value / 100).toFixed(2) + '';
-            value = value.replace(".", ",");
-            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
-            this.value = 'R$ ' + value;
-        });
-    }
+    $('input[data-mask="money"]').on('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        if (value === '') {
+            this.value = '';
+            return;
+        }
+        value = (value / 100).toFixed(2) + '';
+        value = value.replace(".", ",");
+        value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        this.value = 'R$ ' + value;
+    });
+
+    // Limpar formulários ao abrir modal para novo item
+    $('.ft1-modal-trigger').on('click', function() {
+        const modalId = $(this).data('modal');
+        const form = $(`#${modalId} form`);
+        
+        if (form.length && !$(this).hasClass('ft1-btn-edit')) {
+            form[0].reset();
+            form.find('input[type="hidden"]').val('');
+            
+            // Restaurar título original do modal
+            const modalTitle = form.closest('.ft1-modal-content').find('.ft1-modal-header h2');
+            const originalText = modalTitle.text().replace('Editar', 'Cadastrar').replace('Criar', 'Cadastrar');
+            modalTitle.text(originalText);
+        }
+    });
 });

@@ -10,9 +10,14 @@ class FT1_Cultural_Contracts {
             'edital_id' => intval($data['edital_id']),
             'title' => sanitize_text_field($data['title']),
             'content' => wp_kses_post($data['content']),
-            'value' => floatval($data['value']),
+            'value' => isset($data['value']) ? floatval($data['value']) : 0,
             'status' => 'draft'
         );
+
+        // Gerar número do contrato se não existir
+        if (!isset($sanitized_data['contract_number']) || empty($sanitized_data['contract_number'])) {
+            $sanitized_data['contract_number'] = 'CT' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        }
 
         return FT1_Cultural_Database::save_contract($sanitized_data);
     }

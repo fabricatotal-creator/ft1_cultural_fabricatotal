@@ -192,13 +192,13 @@ $all_editals = FT1_Cultural_Database::get_editals(100);
         </div>
         <div class="ft1-modal-body">
             <div class="ft1-file-upload">
-                <input type="file" name="document" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                <input type="file" name="document" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-proponent-id="">
                 <p>📎 Clique aqui para enviar documentos</p>
                 <small>Formatos aceitos: PDF, DOC, DOCX, JPG, PNG</small>
             </div>
             
             <div id="documents-list" style="margin-top: 20px;">
-                <!-- Lista de documentos será carregada via JavaScript -->
+                <p style="text-align: center; color: #666;">Carregando documentos...</p>
             </div>
         </div>
     </div>

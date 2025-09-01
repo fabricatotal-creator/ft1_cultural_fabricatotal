@@ -161,20 +161,20 @@ $editals = FT1_Cultural_Database::get_editals(100);
                 
                 <div class="ft1-form-group">
                     <label for="contract-value">Valor do Contrato (R$)</label>
-                    <input type="text" id="contract-value" name="value" data-mask="money" placeholder="R$ 0,00">
+                    <input type="text" id="contract-value" name="value" data-mask="money" placeholder="0,00">
                 </div>
                 
                 <div class="ft1-form-group">
                     <label for="contract-content">Conteúdo do Contrato *</label>
                     <textarea id="contract-content" name="content" rows="15" required placeholder="Digite aqui o conteúdo completo do contrato..."></textarea>
                     <small style="color: #666;">
-                        💡 Dica: Use variáveis como {nome_proponente}, {email_proponente}, {documento_proponente} que serão substituídas automaticamente.
+                        💡 Dica: Use variáveis como {{nome_proponente}}, {{email_proponente}}, {{documento_proponente}} que serão substituídas automaticamente.
                     </small>
                 </div>
                 
                 <div style="margin-top: 30px; text-align: right;">
                     <button type="button" class="ft1-button secondary ft1-close">Cancelar</button>
-                    <button type="submit" class="ft1-button" style="margin-left: 10px;">💾 Criar Contrato</button>
+                    <button type="submit" class="ft1-button" style="margin-left: 10px;">💾 Salvar Contrato</button>
                 </div>
             </form>
         </div>
