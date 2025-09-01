@@ -1,0 +1,409 @@
+.ft1-cultural-public {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.ft1-public-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.ft1-public-header h1 {
+    margin: 0 0 15px 0;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.ft1-public-header p {
+    margin: 0;
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.ft1-public-nav {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.ft1-nav-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.ft1-nav-tab {
+    margin-right: 30px;
+}
+
+.ft1-nav-tab a {
+    display: block;
+    padding: 15px 0;
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.ft1-nav-tab.active a,
+.ft1-nav-tab a:hover {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+.ft1-public-content {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.ft1-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.ft1-stat-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 25px rgba(240, 147, 251, 0.3);
+}
+
+.ft1-stat-number {
+    font-size: 36px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.ft1-stat-label {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.ft1-editals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.ft1-edital-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ft1-edital-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.ft1-edital-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+.ft1-edital-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+}
+
+.ft1-edital-budget {
+    font-size: 24px;
+    font-weight: bold;
+    opacity: 0.95;
+}
+
+.ft1-edital-body {
+    padding: 25px;
+}
+
+.ft1-edital-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.ft1-edital-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.ft1-edital-meta-item {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.ft1-edital-meta-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.ft1-edital-meta-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.ft1-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.ft1-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.ft1-button.secondary {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+}
+
+.ft1-button.success {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: #333;
+}
+
+.ft1-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.ft1-form-group {
+    margin-bottom: 25px;
+}
+
+.ft1-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.ft1-form-group input,
+.ft1-form-group textarea,
+.ft1-form-group select {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ft1-form-group input:focus,
+.ft1-form-group textarea:focus,
+.ft1-form-group select:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.ft1-profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    margin: 0 auto 30px auto;
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+}
+
+.ft1-profile-info {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ft1-profile-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.ft1-profile-email {
+    font-size: 16px;
+    color: #666;
+}
+
+.ft1-contracts-list {
+    margin-top: 30px;
+}
+
+.ft1-contract-item {
+    background: white;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.ft1-contract-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+.ft1-contract-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.ft1-contract-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.ft1-contract-status {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ft1-contract-status.draft {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.ft1-contract-status.sent {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.ft1-contract-status.signed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.ft1-contract-meta {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.ft1-signature-area {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    margin: 30px 0;
+}
+
+.ft1-signature-canvas {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: crosshair;
+}
+
+.ft1-alert {
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.ft1-alert.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.ft1-alert.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.ft1-alert.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+@media (max-width: 768px) {
+    .ft1-cultural-public {
+        padding: 15px;
+    }
+    
+    .ft1-public-header {
+        padding: 30px 20px;
+    }
+    
+    .ft1-public-header h1 {
+        font-size: 28px;
+    }
+    
+    .ft1-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ft1-editals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ft1-nav-tabs {
+        flex-direction: column;
+    }
+    
+    .ft1-nav-tab {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .ft1-contract-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
