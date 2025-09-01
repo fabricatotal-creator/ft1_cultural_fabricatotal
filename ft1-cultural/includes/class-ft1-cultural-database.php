@@ -126,6 +126,58 @@ class FT1_Cultural_Database {
         return $wpdb->insert($table, $data);
     }
 
+    public static function get_contract($id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_contracts';
+        
+        return $wpdb->get_row($wpdb->prepare(
+            "SELECT c.*, p.name as proponent_name, e.title as edital_title 
+             FROM $table c 
+             LEFT JOIN {$wpdb->prefix}ft1_proponents p ON c.proponent_id = p.id
+             LEFT JOIN {$wpdb->prefix}ft1_editals e ON c.edital_id = e.id
+             WHERE c.id = %d",
+            $id
+        ));
+    }
+
+    public static function delete_edital($id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_editals';
+        
+        return $wpdb->delete($table, array('id' => intval($id)));
+    }
+
+    public static function delete_proponent($id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_proponents';
+        
+        return $wpdb->delete($table, array('id' => intval($id)));
+    }
+
+    public static function delete_contract($id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_contracts';
+        
+        return $wpdb->delete($table, array('id' => intval($id)));
+    }
+
+    public static function delete_document($id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ft1_documents';
+        
+        // Buscar arquivo para deletar do sistema
+        $document = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table WHERE id = %d",
+            $id
+        ));
+        
+        if ($document && file_exists($document->file_path)) {
+            unlink($document->file_path);
+        }
+        
+        return $wpdb->delete($table, array('id' => intval($id)));
+    }
+
     public static function get_documents($proponent_id) {
         global $wpdb;
         $table = $wpdb->prefix . 'ft1_documents';

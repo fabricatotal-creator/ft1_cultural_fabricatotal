@@ -53,6 +53,15 @@ class FT1_Cultural {
         $this->loader->add_action('wp_ajax_ft1_save_proponent', $plugin_admin, 'save_proponent');
         $this->loader->add_action('wp_ajax_ft1_upload_document', $plugin_admin, 'upload_document');
         $this->loader->add_action('wp_ajax_ft1_send_contract', $plugin_admin, 'send_contract');
+        $this->loader->add_action('wp_ajax_ft1_save_contract', $plugin_admin, 'save_contract');
+        $this->loader->add_action('wp_ajax_ft1_delete_edital', $plugin_admin, 'delete_edital');
+        $this->loader->add_action('wp_ajax_ft1_delete_proponent', $plugin_admin, 'delete_proponent');
+        $this->loader->add_action('wp_ajax_ft1_delete_contract', $plugin_admin, 'delete_contract');
+        $this->loader->add_action('wp_ajax_ft1_get_edital', $plugin_admin, 'get_edital');
+        $this->loader->add_action('wp_ajax_ft1_get_proponent', $plugin_admin, 'get_proponent');
+        $this->loader->add_action('wp_ajax_ft1_get_contract', $plugin_admin, 'get_contract');
+        $this->loader->add_action('wp_ajax_ft1_get_documents', $plugin_admin, 'get_documents');
+        $this->loader->add_action('wp_ajax_ft1_delete_document', $plugin_admin, 'delete_document');
     }
 
     private function define_public_hooks() {

@@ -192,4 +192,148 @@ class FT1_Cultural_Admin {
 
         wp_send_json_error(array('message' => 'Erro ao enviar contrato'));
     }
+
+    public function save_contract() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        if (!current_user_can('edit_ft1_contracts')) {
+            wp_die('Permissão negada');
+        }
+
+        $data = array(
+            'proponent_id' => intval($_POST['proponent_id']),
+            'edital_id' => intval($_POST['edital_id']),
+            'title' => sanitize_text_field($_POST['title']),
+            'content' => wp_kses_post($_POST['content']),
+            'value' => floatval(str_replace(['R$', '.', ','], ['', '', '.'], $_POST['value']))
+        );
+
+        if (isset($_POST['id']) && $_POST['id'] > 0) {
+            $data['id'] = intval($_POST['id']);
+        }
+
+        $result = FT1_Cultural_Database::save_contract($data);
+
+        if ($result !== false) {
+            wp_send_json_success(array('message' => 'Contrato salvo com sucesso!'));
+        } else {
+            wp_send_json_error(array('message' => 'Erro ao salvar contrato'));
+        }
+    }
+
+    public function get_edital() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        $id = intval($_POST['id']);
+        $edital = FT1_Cultural_Database::get_edital($id);
+        
+        if ($edital) {
+            wp_send_json_success($edital);
+        } else {
+            wp_send_json_error(array('message' => 'Edital não encontrado'));
+        }
+    }
+
+    public function get_proponent() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        $id = intval($_POST['id']);
+        $proponent = FT1_Cultural_Database::get_proponent($id);
+        
+        if ($proponent) {
+            wp_send_json_success($proponent);
+        } else {
+            wp_send_json_error(array('message' => 'Proponente não encontrado'));
+        }
+    }
+
+    public function get_contract() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        $id = intval($_POST['id']);
+        $contract = FT1_Cultural_Database::get_contract($id);
+        
+        if ($contract) {
+            wp_send_json_success($contract);
+        } else {
+            wp_send_json_error(array('message' => 'Contrato não encontrado'));
+        }
+    }
+
+    public function delete_edital() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        if (!current_user_can('edit_ft1_editals')) {
+            wp_die('Permissão negada');
+        }
+
+        $id = intval($_POST['id']);
+        $result = FT1_Cultural_Database::delete_edital($id);
+
+        if ($result !== false) {
+            wp_send_json_success(array('message' => 'Edital excluído com sucesso!'));
+        } else {
+            wp_send_json_error(array('message' => 'Erro ao excluir edital'));
+        }
+    }
+
+    public function delete_proponent() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        if (!current_user_can('manage_ft1_cultural')) {
+            wp_die('Permissão negada');
+        }
+
+        $id = intval($_POST['id']);
+        $result = FT1_Cultural_Database::delete_proponent($id);
+
+        if ($result !== false) {
+            wp_send_json_success(array('message' => 'Proponente excluído com sucesso!'));
+        } else {
+            wp_send_json_error(array('message' => 'Erro ao excluir proponente'));
+        }
+    }
+
+    public function delete_contract() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        if (!current_user_can('edit_ft1_contracts')) {
+            wp_die('Permissão negada');
+        }
+
+        $id = intval($_POST['id']);
+        $result = FT1_Cultural_Database::delete_contract($id);
+
+        if ($result !== false) {
+            wp_send_json_success(array('message' => 'Contrato excluído com sucesso!'));
+        } else {
+            wp_send_json_error(array('message' => 'Erro ao excluir contrato'));
+        }
+    }
+
+    public function get_documents() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        $proponent_id = intval($_POST['proponent_id']);
+        $documents = FT1_Cultural_Database::get_documents($proponent_id);
+        
+        wp_send_json_success($documents);
+    }
+
+    public function delete_document() {
+        check_ajax_referer('ft1_nonce', 'nonce');
+        
+        if (!current_user_can('manage_ft1_cultural')) {
+            wp_die('Permissão negada');
+        }
+
+        $id = intval($_POST['id']);
+        $result = FT1_Cultural_Database::delete_document($id);
+
+        if ($result !== false) {
+            wp_send_json_success(array('message' => 'Documento excluído com sucesso!'));
+        } else {
+            wp_send_json_error(array('message' => 'Erro ao excluir documento'));
+        }
+    }
 }

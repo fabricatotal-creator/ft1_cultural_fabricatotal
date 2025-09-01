@@ -185,6 +185,23 @@ jQuery(document).ready(function($) {
             const contractId = $(this).data('contract-id');
             sendContract(contractId, 'whatsapp');
         });
+
+        // Botão para gerenciar documentos
+        $('.ft1-modal-trigger[data-modal="ft1-documents-modal"]').on('click', function(e) {
+            e.preventDefault();
+            const proponentId = $(this).data('proponent-id');
+            loadDocuments(proponentId);
+            openModal('ft1-documents-modal');
+        });
+
+        // Delegação de eventos para botões dinâmicos
+        $(document).on('click', '.ft1-btn-delete-document', function(e) {
+            e.preventDefault();
+            const documentId = $(this).data('document-id');
+            if (confirm('Tem certeza que deseja excluir este documento?')) {
+                deleteDocument(documentId);
+            }
+        });
     }
 
     function filterTable(table, searchTerm) {
@@ -217,8 +234,49 @@ jQuery(document).ready(function($) {
     }
 
     function editItem(type, id) {
-        // Implementar edição conforme o tipo
-        console.log(`Editando ${type} com ID ${id}`);
+        const data = {
+            action: `ft1_get_${type}`,
+            id: id,
+            nonce: ft1_ajax.nonce
+        };
+
+        showLoading();
+
+        $.post(ft1_ajax.ajax_url, data)
+            .done(function(response) {
+                hideLoading();
+                if (response.success) {
+                    populateEditForm(type, response.data);
+                    openModal(`ft1-${type}-modal`);
+                } else {
+                    showAlert('error', 'Erro ao carregar dados para edição.');
+                }
+            })
+            .fail(function() {
+                hideLoading();
+                showAlert('error', 'Erro de conexão. Tente novamente.');
+            });
+    }
+
+    function populateEditForm(type, data) {
+        const form = $(`#ft1-${type}-form`);
+        
+        // Preencher campos do formulário
+        Object.keys(data).forEach(function(key) {
+            const field = form.find(`[name="${key}"]`);
+            if (field.length) {
+                if (key === 'value' && data[key]) {
+                    // Formatar valor monetário
+                    field.val('R$ ' + parseFloat(data[key]).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."));
+                } else {
+                    field.val(data[key]);
+                }
+            }
+        });
+        
+        // Atualizar título do modal
+        const modalTitle = form.closest('.ft1-modal-content').find('.ft1-modal-header h2');
+        modalTitle.text(modalTitle.text().replace('Cadastrar', 'Editar').replace('Criar', 'Editar'));
     }
 
     function deleteItem(type, id) {
